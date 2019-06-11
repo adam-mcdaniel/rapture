@@ -1,5 +1,7 @@
+use crate::platform::Platform;
 use std::path::PathBuf;
-use std::fs::create_dir;
+use std::fs::{OpenOptions, create_dir};
+use std::io::prelude::*;
 
 const INSTALL_FOLDER_NAME: &str = ".rapture";
 
@@ -50,6 +52,46 @@ impl PathManager {
         match create_dir(package_dir) {
             Ok(_) => Ok(()),
             Err(_) => Ok(())
+        }
+    }
+
+    pub fn add_to_path(name: String) -> Result<(), String> {
+        let home = Self::home_dir();
+        match Platform::get() {
+            Platform::Unknown | Platform::MacOS | Platform::Ubuntu => {
+                let mut bashrc = PathBuf::new();
+                bashrc.push(home);
+                bashrc.push(".bashrc");
+                let mut file = OpenOptions::new()
+                    .read(true)
+                    .append(true)
+                    .open(bashrc.clone());
+                match &mut file {
+                    Ok(f) => {
+                        let path_addition = format!("export PATH=\"$PATH:{}\"", name);
+
+                        let mut contents = String::new();
+                        f.read_to_string(&mut contents).unwrap();
+
+                        for line in contents.lines() {
+                            if line.to_string().contains(&path_addition) {
+                                return Ok(());
+                            }
+                        }
+                        
+                        match writeln!(f, "{}", path_addition) {
+                            Ok(_) => Ok(()),
+                            Err(_) => Err(format!("Failed to append to file {}", path_to_string(bashrc)))
+                        }
+
+
+                    },
+                    Err(_) => Err(format!("Failed to add {} to PATH", name))
+                }
+            },
+            Platform::Windows => {
+                Err(format!("Adding to path is not yet supported for Windows"))
+            },
         }
     }
 }

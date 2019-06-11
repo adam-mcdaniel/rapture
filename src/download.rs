@@ -29,7 +29,6 @@ impl Downloader {
             },
             Err(_) => Err("Could not open downloaded script".to_string())
         }
-        
     }
 
     pub fn download_file(url: String, output_file: String) -> Result<(), String> {

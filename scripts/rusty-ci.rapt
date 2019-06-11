@@ -1,0 +1,7 @@
+package rusty-ci
+
+install https://raw.githubusercontent.com/adam-mcdaniel/rapture/master/scripts/rust.rapt
+
+
+git-clone "https://github.com/adam-mcdaniel/dragon"
+

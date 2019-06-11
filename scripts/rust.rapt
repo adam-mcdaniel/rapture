@@ -1,0 +1,4 @@
+LINUX curl https://sh.rustup.rs -sSf | sh
+MACOS curl https://sh.rustup.rs -sSf | sh
+
+WINDOWS echo "You must download rust from rust-lang.org to install on windows."
