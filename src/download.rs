@@ -6,13 +6,8 @@ use std::path::PathBuf;
 use std::fs::File;
 use std::io::prelude::*;
 
-pub enum DownloadError {
-    UrlNotFound
-}
 
-pub struct Downloader {
-    
-}
+pub struct Downloader {}
 
 
 impl Downloader {

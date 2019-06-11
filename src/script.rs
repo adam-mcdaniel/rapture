@@ -62,6 +62,9 @@ impl Script {
                         Platform::command(cmd)?;
                     }
                 },
+                ("*", cmd) => {
+                    Platform::command(cmd)?;
+                },
                 (command, args) => {
                     return Err(format!("Unrecognized command '{} {}'", command, args));
                 }
