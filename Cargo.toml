@@ -3,6 +3,11 @@ name = "rapture"
 version = "0.1.2"
 authors = ["adam-mcdaniel <adam.mcdaniel17@gmail.com>"]
 edition = "2018"
+license-file = "LICENSE"
+readme = "README.md"
+description = "A cross platform install script library / package manager"
+homepage = "https://github.com/adam-mcdaniel/rapture"
+repository = "https://github.com/adam-mcdaniel/rapture"
 
 [[bin]]
 name = "rapt"
