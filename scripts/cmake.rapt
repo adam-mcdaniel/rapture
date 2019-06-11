@@ -1,5 +1,10 @@
 package cmake
 
+rapt-install https://raw.githubusercontent.com/adam-mcdaniel/rapture/master/scripts/gcc.rapt
+rapt-install https://raw.githubusercontent.com/adam-mcdaniel/rapture/master/scripts/make.rapt
+
 git-clone https://github.com/Kitware/CMake
 LINUX cd CMake; ./bootstrap && make && sudo make install
 MACOS cd CMake; ./bootstrap && make && sudo make install
+
+add-path ./CMake/bin/

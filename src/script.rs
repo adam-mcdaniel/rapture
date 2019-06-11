@@ -1,10 +1,11 @@
 use crate::path::{PathManager, path_to_string};
 use crate::platform::Platform;
+use crate::backup;
 use crate::frontend::{install, gitclone, add_to_path};
 use std::fmt::{Display, Formatter, Error};
 use std::path::PathBuf;
 
-
+#[derive(Clone)]
 pub struct Script {
     package_name: Option<String>,
     script: String,
@@ -37,6 +38,19 @@ impl Script {
         }
     }
 
+    pub fn command<S: Display>(&self, cmd: S) -> Result<(), String> {
+        match self.package_name.clone() {
+            Some(name) => {
+                Platform::command(format!("cd {}; {};", PathManager::package_dir(name.to_string()), cmd))?;
+            },
+            None => {
+                Platform::command(cmd)?;
+            }
+        }
+        Ok(())
+    }
+
+
     pub fn run(&mut self) -> Result<(), String> {
         let lines = self.script.lines();
 
@@ -62,10 +76,13 @@ impl Script {
                         }
                     }
                 },
-                ("install", url) => {
+                ("rapt-install", url) => {
                     install(url.to_string())?;
                 },
-                ("path-add", path) => {
+                ("backend-install", url) => {
+                    backup::install(url.to_string())?;
+                },
+                ("add-path", path) => {
                     match self.package_name.clone() {
                         Some(name) => {
                             let package_dir = PathManager::package_dir(name.to_string());
@@ -81,26 +98,29 @@ impl Script {
                 },
                 ("WINDOWS", cmd) => {
                     if Platform::get() == Platform::Windows {
-                        Platform::command(cmd)?;
+                        self.command(cmd)?;
                     }
                 },
                 ("MACOS", cmd) => {
                     if Platform::get() == Platform::MacOS {
-                        Platform::command(cmd)?;
+                        self.command(cmd)?;
                     }
                 },
                 ("UBUNTU", cmd) | ("LINUX", cmd) => {
                     if Platform::get() == Platform::Ubuntu {
-                        Platform::command(cmd)?;
+                        self.command(cmd)?;
                     }
                 },
                 ("UNKNOWN", cmd) => {
                     if Platform::get() == Platform::Unknown {
-                        Platform::command(cmd)?;
+                        self.command(cmd)?;
                     }
                 },
+                ("echo", string) => {
+                    println!("{}", string);
+                },
                 ("*", cmd) => {
-                    Platform::command(cmd)?;
+                    self.command(cmd)?;
                 },
                 ("", "") => {},
                 (command, args) => {

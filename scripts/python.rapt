@@ -1,10 +1,8 @@
 LINUX sudo apt update
 LINUX sudo apt upgrade
-LINUX sudo apt install python3-dev
-LINUX sudo apt install python3-pip
-LINUX sudo apt install python3-venv
-LINUX echo "Done installing python"
-
-install https://raw.githubusercontent.com/adam-mcdaniel/rapture/master/scripts/brew.rapt
-MACOS brew install python3
-MACOS echo "Done installing python"
+rapt-install https://raw.githubusercontent.com/adam-mcdaniel/rapture/master/scripts/brew.rapt
+backend-install python3
+backend-install python3-dev
+backend-install python3-pip
+backend-install python3-venv
+echo Done installing python

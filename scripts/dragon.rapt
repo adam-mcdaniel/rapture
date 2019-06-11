@@ -1,0 +1,12 @@
+package dragon
+
+
+rapt-install https://raw.githubusercontent.com/adam-mcdaniel/rapture/master/scripts/gcc.rapt
+rapt-install https://raw.githubusercontent.com/adam-mcdaniel/rapture/master/scripts/python.rapt
+rapt-install https://raw.githubusercontent.com/adam-mcdaniel/rapture/master/scripts/cmake.rapt
+
+git-clone "https://github.com/adam-mcdaniel/dragon"
+
+* cd dragon; mkdir build; cd build; cmake ..; make
+
+add-path dragon/compiler/ubuntu/

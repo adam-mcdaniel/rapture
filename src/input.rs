@@ -8,13 +8,19 @@ pub fn input<S: ToString>(prompt: S) -> String {
 
     stdin().read_line(&mut buf).expect("Could not get user input");
 
-    if let Some('\n') = buf.chars().next_back() {
+    while let Some('\n') = buf.chars().next_back() {
         buf.pop();
     }
 
-    if let Some('\r') = buf.chars().next_back() {
+    while let Some('\r') = buf.chars().next_back() {
         buf.pop();
     }
 
     return buf;
+}
+
+pub fn yes_or_no<S: ToString>(prompt: S) -> bool {
+    let response = input(prompt);
+
+    response.to_lowercase().trim() == "y"
 }

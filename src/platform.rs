@@ -24,6 +24,7 @@ impl Platform {
     }
 
     pub fn command<S: Display>(s: S) -> Result<(), String> {
+        let s = s.to_string().trim_end_matches(";").to_string();
         match Self::get() {
             Platform::Windows => {
                 match Command::new("cmd").args(&["/C", &format!("{}", s)]).output() {
@@ -32,19 +33,19 @@ impl Platform {
                 }
             },
             Platform::MacOS => {
-                match Command::new("sh").args(&["-c", &format!("{}", s)]).output() {
+                match Command::new("bash").args(&["-c", &format!("{}", s)]).output() {
                     Ok(_) => Ok(()),
                     Err(_) => Err(format!("Failed to run macos command '{}'", s))
                 }
             },
             Platform::Ubuntu => {
-                match Command::new("sh").args(&["-c", &format!("{}", s)]).output() {
+                match Command::new("bash").args(&["-c", &format!("{}", s)]).output() {
                     Ok(_) => Ok(()),
                     Err(_) => Err(format!("Failed to run Ubuntu command '{}'", s))
                 }
             },
             Platform::Unknown => {
-                match Command::new("sh").args(&["-c", &format!("{}", s)]).output() {
+                match Command::new("bash").args(&["-c", &format!("{}", s)]).output() {
                     Ok(_) => Ok(()),
                     Err(_) => Err(format!("Failed to run Linux command '{}'", s))
                 }

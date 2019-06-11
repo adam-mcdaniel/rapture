@@ -1,8 +1,11 @@
+
 package rusty-ci
 
-install https://raw.githubusercontent.com/adam-mcdaniel/rapture/master/scripts/rust.rapt
-install https://raw.githubusercontent.com/adam-mcdaniel/rapture/master/scripts/gcc.rapt
-install https://raw.githubusercontent.com/adam-mcdaniel/rapture/master/scripts/make.rapt
-install https://raw.githubusercontent.com/adam-mcdaniel/rapture/master/scripts/cmake.rapt
+rapt-install https://raw.githubusercontent.com/adam-mcdaniel/rapture/master/scripts/rust.rapt
+rapt-install https://raw.githubusercontent.com/adam-mcdaniel/rapture/master/scripts/python.rapt
 
-git-clone "https://github.com/adam-mcdaniel/dragon"
+git-clone "https://github.com/adam-mcdaniel/rusty-ci"
+
+* cd rusty-ci; cargo build --release
+
+add-path rusty-ci/target/release/
