@@ -1,7 +1,8 @@
-use crate::path::PathManager;
+use crate::path::{PathManager, path_to_string};
 use crate::platform::Platform;
 use crate::frontend::{install, gitclone, add_to_path};
 use std::fmt::{Display, Formatter, Error};
+use std::path::PathBuf;
 
 
 pub struct Script {
@@ -44,6 +45,7 @@ impl Script {
             match (command.as_str(), args.as_str()) {
                 ("package", name) => {
                     PathManager::make_package_dir(name.to_string())?;
+                    PathManager::add_to_path(name.to_string())?;
                     self.package_name = Some(name.to_string());
                 },
                 ("git-clone", url) => {
@@ -64,7 +66,18 @@ impl Script {
                     install(url.to_string())?;
                 },
                 ("path-add", path) => {
-                    add_to_path(path.to_string())?;
+                    match self.package_name.clone() {
+                        Some(name) => {
+                            let package_dir = PathManager::package_dir(name.to_string());
+                            let mut absolute_path = PathBuf::new();
+                            absolute_path.push(package_dir);
+                            absolute_path.push(path);
+                            add_to_path(path_to_string(absolute_path))?;
+                        },
+                        None => {
+                            return Err("Tried to add to path without declaring the install script as a package installer via the `package PACKAGE_NAME` rapture command.".to_string())
+                        }
+                    }
                 },
                 ("WINDOWS", cmd) => {
                     if Platform::get() == Platform::Windows {

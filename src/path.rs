@@ -68,7 +68,8 @@ impl PathManager {
                     .open(bashrc.clone());
                 match &mut file {
                     Ok(f) => {
-                        let path_addition = format!("export PATH=\"$PATH:{}\"", name);
+                        let package_dir = Self::package_dir(name);
+                        let path_addition = format!("export PATH=\"$PATH:{}\"", package_dir);
 
                         let mut contents = String::new();
                         f.read_to_string(&mut contents).unwrap();

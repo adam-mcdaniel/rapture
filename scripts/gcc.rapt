@@ -1,2 +1,3 @@
-LINUX wget https://ftpmirror.gnu.org/gcc/gcc-9.1.0/gcc-9.1.0.tar.gz
-MACOS wget https://ftpmirror.gnu.org/gcc/gcc-9.1.0/gcc-9.1.0.tar.gz
+LINUX sudo apt update
+LINUX sudo apt upgrade
+LINUX sudo apt install gcc g++ clang clang++
