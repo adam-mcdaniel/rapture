@@ -1,0 +1,15 @@
+[package]
+name = "rapture"
+version = "0.1.0"
+authors = ["adam-mcdaniel <adam.mcdaniel17@gmail.com>"]
+edition = "2018"
+
+[[bin]]
+name = "rapt"
+path = "src/bin.rs"
+
+
+[dependencies]
+clap = "2.33.0"
+os_info = "1.1.1"
+dirs = "2.0.1"
