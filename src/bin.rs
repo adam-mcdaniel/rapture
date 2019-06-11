@@ -1,5 +1,5 @@
 extern crate clap;
-use clap::{clap_app};
+use clap::{clap_app, crate_version};
 use rapture::frontend::install;
 use rapture::script::Script;
 use std::fs::File;
@@ -8,11 +8,11 @@ use std::io::prelude::*;
 
 fn main() {
     let matches = clap_app!(rapture =>
-            (version: "0.1.0")
+            (version: crate_version!())
             (author: "Adam McDaniel <adam.mcdaniel17@gmail.com>")
             (about: "A cross platform install script library / package manager")
             (@subcommand install =>
-                (about: "Install a package")
+                (about: "Install a rapture package")
                 (version: "0.0.0")
                 (author: "Adam McDaniel <adam.mcdaniel17@gmail.com>")
                 (@arg INPUT_FILE: -f --file +takes_value "Install from an input rapture file")
