@@ -24,7 +24,6 @@ fn main() {
     if let Some(install_matches) = matches.subcommand_matches("install") {
         match install_matches.value_of("PACKAGE") {
             Some(package) => {
-                println!("You want to install: \"{}\"", package);
                 match install(package.to_string()) {
                     Ok(()) => {
                         println!("Successfully installed package.")
