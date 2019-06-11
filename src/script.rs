@@ -122,6 +122,9 @@ impl Script {
                 ("*", cmd) => {
                     self.command(cmd)?;
                 },
+                ("#", _) => {
+                    // # will denote a comment
+                },
                 ("", "") => {},
                 (command, args) => {
                     return Err(format!("Unrecognized command '{} {}'", command, args));
