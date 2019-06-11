@@ -1,0 +1,9 @@
+package rapture
+
+rapt-install https://raw.githubusercontent.com/adam-mcdaniel/rapture/master/scripts/rust.rapt
+
+git-clone "https://github.com/adam-mcdaniel/rapture"
+
+* cd rapture; cargo build --release
+
+add-path rapture/target/release/
