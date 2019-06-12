@@ -1,7 +1,10 @@
-use std::process::Command;
+/// This part of the crate is for interacting with the operating system's
+/// local package manager when rapture fails to install a package.
+/// It supports installing through apt, scoop, and brew.
+
 use crate::platform::Platform;
 
-
+/// Get the name of the expected package manager for the current platform
 pub fn installer_name() -> String {
     match Platform::get() {
         Platform::Ubuntu => {
@@ -19,6 +22,8 @@ pub fn installer_name() -> String {
     }
 }
 
+
+/// Install a package using the systems expected package manager
 pub fn install(name: String) -> Result<(), String> {
     match Platform::get() {
         Platform::Ubuntu => {
@@ -37,6 +42,7 @@ pub fn install(name: String) -> Result<(), String> {
 }
 
 
+/// Install a package with apt
 fn apt_install(name: String) -> Result<(), String> {
     match Platform::command(format!("sudo apt install {}", name)) {
         Ok(_) => Ok(()),
@@ -44,6 +50,7 @@ fn apt_install(name: String) -> Result<(), String> {
     }
 }
 
+/// Install a package with brew
 fn brew_install(name: String) -> Result<(), String> {
     match Platform::command(format!("brew install {}", name)) {
         Ok(_) => Ok(()),
@@ -51,6 +58,7 @@ fn brew_install(name: String) -> Result<(), String> {
     }
 }
 
+/// Install a package with scoop
 fn scoop_install(name: String) -> Result<(), String> {
     match Platform::command(format!("scoop install {}", name)) {
         Ok(_) => Ok(()),
