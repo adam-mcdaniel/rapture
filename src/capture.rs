@@ -16,13 +16,10 @@ pub fn decode(string: String) -> Result<Vec<u8>, String> {
 
 
 fn is_hidden(entry: &DirEntry) -> bool {
-    let result = entry.file_name()
+    entry.file_name()
          .to_str()
          .map(|s| s.starts_with(".") && s != ".")
-         .unwrap_or(false);
-    let path = entry.path().display().to_string();
-    println!("{} {}", path, result);
-    result
+         .unwrap_or(false)
 }
 
 
