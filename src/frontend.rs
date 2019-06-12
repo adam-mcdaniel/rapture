@@ -1,7 +1,6 @@
 use crate::platform::Platform;
 use crate::path::PathManager;
 use crate::download::Downloader;
-use crate::script::Script;
 use crate::backup;
 use crate::input::{input, yes_or_no};
 

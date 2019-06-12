@@ -2,8 +2,12 @@ use crate::path::{PathManager, path_to_string};
 use crate::platform::Platform;
 use crate::backup;
 use crate::frontend::{install, gitclone, add_to_path};
+use crate::capture::decode;
 use std::fmt::{Display, Formatter, Error};
+use std::fs::{create_dir_all, OpenOptions};
+use std::io::prelude::*;
 use std::path::PathBuf;
+
 
 #[derive(Clone)]
 pub struct Script {
@@ -12,7 +16,7 @@ pub struct Script {
 }
 
 
-fn split_first_space<'a>(s: String) -> (String, String) {
+fn split_first_space<'a>(s: String) -> Result<(String, String), ()> {
     let mut split_index = 0;
     for (i, c) in s.clone().chars().enumerate() {
         split_index = i;
@@ -24,9 +28,13 @@ fn split_first_space<'a>(s: String) -> (String, String) {
         }
     }
 
+    if split_index >= s.to_string().len() - 1 {
+        return Err(())
+    }
+
     let head = &s.as_str()[..split_index];
     let tail = &s.as_str()[split_index..];
-    return (head.trim().to_string(), tail.trim().to_string())
+    return Ok((head.trim().to_string(), tail.trim().to_string()))
 }
 
 
@@ -55,7 +63,11 @@ impl Script {
         let lines = self.script.lines();
 
         for line in lines {
-            let (command, args) = split_first_space(line.to_string());
+            let (command, args) = match split_first_space(line.to_string()) {
+                Ok((c, a)) => (c, a),
+                Err(_) => continue
+            };
+
             match (command.as_str(), args.as_str()) {
                 ("package", name) => {
                     PathManager::make_package_dir(name.to_string())?;
@@ -81,6 +93,61 @@ impl Script {
                 },
                 ("backend-install", url) => {
                     backup::install(url.to_string())?;
+                },
+                ("write-hex", path_hex) => {
+                    match self.package_name.clone() {
+                        Some(name) => {
+                            let (path, bytes) = match split_first_space(path_hex.to_string()) {
+                                Ok((c, a)) => (c, a),
+                                Err(_) => continue
+                            };
+                            
+                            let package_dir = PathManager::package_dir(name.to_string());
+                            let mut absolute_path = PathBuf::new();
+                            absolute_path.push(package_dir);
+                            absolute_path.push(path);
+                            
+                            let mut file = match OpenOptions::new()
+                                .create(true)
+                                .write(true)
+                                .open(absolute_path.clone()) 
+                            {
+                                Ok(f) => Ok(f),
+                                Err(_) => Err(format!("Could not open file '{}'", path_to_string(absolute_path.clone())))
+                            }?;
+
+                            match decode(bytes.clone()) {
+                                Ok(vector) => match file.write_all(&vector) {
+                                    Ok(_) => {},
+                                    Err(_) => return Err(format!("Could not write decoded bytes to file '{}'", path_to_string(absolute_path)))
+                                },
+                                Err(_) => return Err(format!("Could not decode hex code '{}'", bytes.clone()))
+                            };
+                        },
+                        None => {
+                            return Err("Tried to write hex to a file without declaring the install script as a package installer via the `package PACKAGE_NAME` rapture command.".to_string())
+                        }
+                    }
+                },
+                ("mkdir", path) => {
+                    match self.package_name.clone() {
+                        Some(name) => {
+                            let package_dir = PathManager::package_dir(name.to_string());
+                            let mut absolute_path = PathBuf::new();
+                            absolute_path.push(package_dir);
+                            absolute_path.push(path);
+                            match create_dir_all(absolute_path.clone()) {
+                                Ok(()) => {},
+                                Err(_) => return Err(format!("Failed to create directory {}", path_to_string(absolute_path)))
+                            }
+                        },
+                        None => {
+                            return Err("Tried to make directory without declaring the install script as a package installer via the `package PACKAGE_NAME` rapture command.".to_string())
+                        }
+                    }
+                },
+                ("echo", string) => {
+                    println!("{}", string);
                 },
                 ("add-path", path) => {
                     match self.package_name.clone() {
@@ -115,9 +182,6 @@ impl Script {
                     if Platform::get() == Platform::Unknown {
                         self.command(cmd)?;
                     }
-                },
-                ("echo", string) => {
-                    println!("{}", string);
                 },
                 ("*", cmd) => {
                     self.command(cmd)?;
