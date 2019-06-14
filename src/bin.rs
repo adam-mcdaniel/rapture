@@ -1,4 +1,4 @@
-use clap::{clap_app, crate_version};
+use clap::{clap_app, crate_version, AppSettings};
 use rapture::frontend::install;
 use rapture::script::Script;
 use rapture::capture::capture;
@@ -25,7 +25,8 @@ fn main() {
                 (@arg PACKAGE_NAME: +required "The name of the generated package")
                 (@arg DIRECTORY: +required "The path to the directory to capture")
             )
-    ).get_matches();
+    ).setting(AppSettings::ArgRequiredElseHelp)
+    .get_matches();
 
 
     if let Some(install_matches) = matches.subcommand_matches("install") {
